@@ -1,0 +1,33 @@
+! Documentation:
+! http://pod.tst.eu/http://cvs.schmorp.de/rxvt-unicode/doc/rxvt.1.pod#RESOURCES
+
+#include "/home/pirro/.colors/s3r0"
+
+! #####
+URxvt*perl-lib: /usr/lib/urxvt/perl
+URxvt*perl-ext-common: default,matcher,clipboard,font-size
+URxvt*perl-matcher: 1
+URxvt*matcher-button: 3
+URxvt*url_launcher: /usr/bin/firefox
+URxvt*letterspace: -7
+URxvt*cursorBlink: True
+URxvt*cursorUnderline: False
+URxvt*scrollBar: False
+URxvt*depth: 32
+URxvt*internalBorder: 5
+URxvt*dynamicColors: on
+URxvt*urgentOnBell: True
+
+URxvt.iso14755: False
+URxvt.iso14755_52: False
+
+URxvt*font: xft:Inconsolata for Powerline:size=11
+URxvt*boldFont: xft:Inconsolata for Powerline:size=11
+
+Xft.antialias: 1
+Xft.autohint: 0
+Xft.dpi: 96
+Xft.hinting: 1
+Xft.hintstyle: hintfull
+Xft.lcdfilter: lcddefault
+Xft.rgba: rgb

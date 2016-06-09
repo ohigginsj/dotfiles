@@ -21,8 +21,8 @@ URxvt*urgentOnBell: True
 URxvt.iso14755: False
 URxvt.iso14755_52: False
 
-URxvt*font: xft:Inconsolata for Powerline:size=11
-URxvt*boldFont: xft:Inconsolata for Powerline:size=11
+URxvt*font: xft:Inconsolata for Powerline:size=12
+URxvt*boldFont: xft:Inconsolata for Powerline:size=12
 
 Xft.antialias: 1
 Xft.autohint: 0

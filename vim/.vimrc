@@ -43,32 +43,40 @@ set smartcase  " no ignorecase if Uppercase char present
 syntax on                  " turn syntax highlighting on by default
 filetype plugin indent on  " load indent file for specific file type
 au FileType * setl fo-=cro " disable autocomment, which is enabled by filtype plugin
+set makeprg=./build.sh
+
+" Load Plugins
+call plug#begin('~/.vim/plugged')
+Plug 'bbchung/clighter'
+Plug 'bkad/CamelCaseMotion'
+Plug 'ervandew/supertab'
+Plug 'fholgado/minibufexpl.vim'
+Plug 'godlygeek/tabular'
+"Plug 'gilligan/vim-lldb' very unfortunately, this is broken
+Plug 'itchyny/lightline.vim'
+Plug 'kien/ctrlp.vim'
+Plug 'lokaltog/vim-easymotion'
+Plug 'rking/ag.vim'
+Plug 'scrooloose/nerdtree'
+Plug 'scrooloose/nerdcommenter'
+Plug 'terryma/vim-smooth-scroll'
+Plug 'tikhomirov/vim-glsl'
+Plug 'tpope/vim-abolish'
+Plug 'tpope/vim-fugitive'
+Plug 'tpope/vim-unimpaired'
+call plug#end()
 
 " Plugin Configuration
+" lightline
 let g:lightline = {
     \ 'colorscheme': '16color',
     \ 'separator': { 'left': '', 'right': '' },
     \ 'subseparator': { 'left': '', 'right': '' }
     \}
-
-
+" clighter
 let g:clighter_libclang_file = '/usr/lib/libclang.so'
-
-" Load Plugins
-call plug#begin('~/.vim/plugged')
-Plug 'bbchung/clighter'
-Plug 'fholgado/minibufexpl.vim'
-Plug 'godlygeek/tabular'
-Plug 'itchyny/lightline.vim'
-Plug 'lokaltog/vim-easymotion'
-Plug 'rking/ag.vim'
-Plug 'scrooloose/nerdtree'
-Plug 'scrooloose/nerdcommenter'
-Plug 'tpope/vim-abolish'
-Plug 'tpope/vim-fugitive'
-Plug 'tpope/vim-unimpaired'
-Plug 'bkad/CamelCaseMotion'
-call plug#end()
+" CtrlP
+let g:ctrlp_map =  '<leader>f'
 
 " Cursor
 let &t_SI .= "\<Esc>[1 q" " insert mode: blinking block
@@ -99,6 +107,7 @@ colorscheme default
 highlight Search cterm=NONE ctermfg=white ctermbg=black
 highlight Type ctermfg=green
 " clighter
+" Commented lines have no apparent effect
 "highlight cligherInclusionDirective cterm=NONE ctermfg=magenta     ctermbg=NONE
 "highlight clighterRef               cterm=NONE ctermfg=red         ctermbg=NONE
 "highlight clighterDecl              cterm=NONE ctermfg=green       ctermbg=NONE
@@ -126,6 +135,12 @@ highlight clighterNamespace          cterm=NONE ctermfg=red         ctermbg=NONE
 highlight clighterNamespaceRef       cterm=NONE ctermfg=magenta     ctermbg=NONE
 highlight default link clighterOccurrences IncSearch
 
+" easymotion
+highlight EasyMotionTarget        ctermfg=darkred ctermbg=none
+highlight EasyMotionShade         ctermfg=darkblue    ctermbg=none
+highlight EasyMotionTarget2First  ctermfg=yellow ctermbg=none
+highlight EasyMotionTarget2Second ctermfg=magenta    ctermbg=none
+
 " minibuf explorer
 highlight MBENormal               ctermfg=darkgreen ctermbg=NONE
 highlight MBEChanged              ctermfg=darkred   ctermbg=NONE
@@ -133,6 +148,9 @@ highlight MBEVisibleNormal        ctermfg=gray      ctermbg=NONE
 highlight MBEVisibleChanged       ctermfg=darkred   ctermbg=NONE
 highlight MBEVisibleActiveNormal  ctermfg=gray      ctermbg=darkblue
 highlight MBEVisibleActiveChanged ctermfg=darkred   ctermbg=darkblue
+
+" Todo, Note
+highlight Todo term=bold ctermfg=red ctermbg=none
 
 " Keymaps
 " Split Navigation
@@ -143,5 +161,20 @@ nnoremap <C-L> <C-W><C-L>
 " Ctrl-/ clears search highlight. Vim wants a '_' instead of '/' for some reason
 nnoremap <silent> <C-_> :nohlsearch<CR><C-_>
 
+" Smooth scrolling
+noremap <silent> <c-u> :call smooth_scroll#up(&scroll, 10, 2)<CR>
+noremap <silent> <c-d> :call smooth_scroll#down(&scroll, 10, 2)<CR>
+noremap <silent> <c-b> :call smooth_scroll#up(&scroll*2, 15, 4)<CR>
+noremap <silent> <c-f> :call smooth_scroll#down(&scroll*2, 15, 4)<CR>
+
 " Remap Make command and redraw over terminal output
 nnoremap <leader>m :silent make\|redraw!\|cw<CR>
+
+command! -nargs=1 Silent
+            \ | execute ':silent !'.<q-args>
+            \ | execute ':redraw!'
+
+nnoremap <leader>r :Silent ./run.sh<CR>
+nnoremap <leader>d :Silent ./debug.sh<CR>
+" Ag
+nnoremap <leader>k :Ag "\b<C-R><C-W>\b"<CR>:cw<CR>

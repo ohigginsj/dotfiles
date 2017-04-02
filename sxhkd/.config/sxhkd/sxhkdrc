@@ -94,7 +94,13 @@ super + Left
 	xdo move -x -96
 
 super + Right
-	xdo move -x +96
+	xdo move -x +32
+
+super + alt + Right
+	xdo resize -x +32
+
+super + alt + Left
+	xdo resize -x +32
 
 #
 # wm independent hotkeys

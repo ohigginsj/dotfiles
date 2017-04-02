@@ -26,9 +26,11 @@ set softtabstop=4
 set expandtab
 set cinoptions=(0,W4 " Indent to open parenthesis
 
+" Whitespace
 set list
 set listchars=trail:·,tab:»· " Display tabs and trailing spaces
 
+" Wrapping
 set nowrap    " Don't wrap lines
 set linebreak " Wrap lines at convenient points
 
@@ -47,12 +49,12 @@ set makeprg=./build.sh
 
 " Load Plugins
 call plug#begin('~/.vim/plugged')
-Plug 'bbchung/clighter'
+Plug 'jeaye/color_coded'
 Plug 'bkad/CamelCaseMotion'
+Plug 'cespare/vim-toml'
 Plug 'ervandew/supertab'
-Plug 'fholgado/minibufexpl.vim'
+" Plug 'fholgado/minibufexpl.vim'
 Plug 'godlygeek/tabular'
-"Plug 'gilligan/vim-lldb' very unfortunately, this is broken
 Plug 'itchyny/lightline.vim'
 Plug 'kien/ctrlp.vim'
 Plug 'lokaltog/vim-easymotion'
@@ -75,6 +77,7 @@ let g:lightline = {
     \}
 " clighter
 let g:clighter_libclang_file = '/usr/lib/libclang.so'
+let g:clighter_highlight_blacklist = []
 " CtrlP
 let g:ctrlp_map =  '<leader>f'
 
@@ -105,35 +108,53 @@ set t_Co=16
 set background=dark
 colorscheme default
 highlight Search cterm=NONE ctermfg=white ctermbg=black
-highlight Type ctermfg=green
-" clighter
-" Commented lines have no apparent effect
-"highlight cligherInclusionDirective cterm=NONE ctermfg=magenta     ctermbg=NONE
-"highlight clighterRef               cterm=NONE ctermfg=red         ctermbg=NONE
-"highlight clighterDecl              cterm=NONE ctermfg=green       ctermbg=NONE
-"highlight clighterTemplateTypeParameter cterm=NONE ctermfg=white       ctermbg=NONE
-"highlight clighterTemplateRef       cterm=NONE ctermfg=yellow       ctermbg=NONE
-highlight clighterPrepro             cterm=NONE ctermfg=darkmagenta ctermbg=NONE
-highlight clighterMacroInstantiation cterm=NONE ctermfg=darkred     ctermbg=NONE
-highlight clighterTypeRef            cterm=NONE ctermfg=brown       ctermbg=NONE
-highlight clighterFieldDecl          cterm=NONE ctermfg=white       ctermbg=NONE
-highlight clighterFunctionDecl       cterm=NONE ctermfg=darkgreen   ctermbg=NONE
-highlight clighterMemberRefExprCall  cterm=NONE ctermfg=darkgreen   ctermbg=NONE
-highlight clighterDeclRefExprCall    cterm=NONE ctermfg=darkgreen   ctermbg=NONE
-highlight clighterVarDecl            cterm=NONE ctermfg=white       ctermbg=NONE
-highlight clighterParmDecl           cterm=NONE ctermfg=white       ctermbg=NONE
-highlight clighterDeclRefExprTypedef cterm=NONE ctermfg=yellow      ctermbg=NONE
-highlight clighterDeclRefExprPointer cterm=NONE ctermfg=yellow      ctermbg=NONE
-highlight clighterMemberRefExprVar   cterm=NONE ctermfg=cyan        ctermbg=NONE
-highlight clighterStructDecl         cterm=NONE ctermfg=brown       ctermbg=NONE
-highlight clighterEnumDecl           cterm=NONE ctermfg=brown       ctermbg=NONE
-highlight clighterUnionDecl          cterm=NONE ctermfg=brown       ctermbg=NONE
-highlight clighterClassDecl          cterm=NONE ctermfg=brown       ctermbg=NONE
-highlight clighterEnumConstantDecl   cterm=NONE ctermfg=magenta     ctermbg=NONE
-highlight clighterDeclRefExprEnum    cterm=NONE ctermfg=magenta     ctermbg=NONE
-highlight clighterNamespace          cterm=NONE ctermfg=red         ctermbg=NONE
-highlight clighterNamespaceRef       cterm=NONE ctermfg=magenta     ctermbg=NONE
-highlight default link clighterOccurrences IncSearch
+" General
+hi Comment          ctermfg=darkblue
+hi Constant         ctermfg=darkred
+    hi String       ctermfg=cyan
+    hi Character    ctermfg=cyan
+    hi Number       ctermfg=red
+    hi Boolean      ctermfg=red
+    hi Float        ctermfg=red
+hi Special          ctermfg=darkmagenta
+hi Indentifier      ctermfg=red
+    hi Function     ctermfg=blue
+hi Statement        ctermfg=brown
+    hi Conditional  ctermfg=brown
+    hi Repeat       ctermfg=brown
+    hi Label        ctermfg=brown
+    hi Operator     ctermfg=brown
+    hi Keyword      ctermfg=brown
+    hi Exception    ctermfg=brown
+hi PreProc          ctermfg=darkmagenta
+    hi Include      ctermfg=darkmagenta
+    hi Define       ctermfg=darkmagenta
+    hi Macro        ctermfg=darkmagenta
+    hi PreCondit    ctermfg=darkmagenta
+hi Type             ctermfg=green
+    hi StorageClass ctermfg=green
+    hi Structure    ctermfg=green
+    hi Typedef      ctermfg=green
+hi Variable         ctermfg=lightgray
+hi EnumConstant     ctermfg=magenta
+" color_coded
+hi StructDecl         ctermfg=brown
+hi UnionDecl          ctermfg=brown
+hi EnumDecl           ctermfg=brown
+hi FieldDecl          ctermfg=white
+hi EnumConstantDecl   ctermfg=magenta
+hi FunctionDecl       ctermfg=darkgreen
+hi VarDecl            ctermfg=white
+hi ParmDecl           ctermfg=white
+hi TypedefDecl        ctermfg=red
+hi TypeRef            ctermfg=brown
+hi LabelRef           ctermfg=brown
+hi DeclRefExpr        ctermfg=red
+hi MemberRefExpr      ctermfg=green
+hi CallExpr           ctermfg=white
+hi BlockExpr          ctermfg=red
+hi MacroDefinition    ctermfg=darkgray
+hi MacroInstantiation ctermfg=darkred
 
 " easymotion
 highlight EasyMotionTarget        ctermfg=darkred ctermbg=none
@@ -153,28 +174,47 @@ highlight MBEVisibleActiveChanged ctermfg=darkred   ctermbg=darkblue
 highlight Todo term=bold ctermfg=red ctermbg=none
 
 " Keymaps
+
+" Leader mappings
+nnoremap ; :
+
+" Ag mappings
+map <C-P> "zyiw:exe "Ag ".@z.""<CR>
+
+" CamelCaseMotion"
+call camelcasemotion#CreateMotionMappings(',')
+
 " Split Navigation
 nnoremap <C-H> <C-W><C-H>
 nnoremap <C-J> <C-W><C-J>
 nnoremap <C-K> <C-W><C-K>
 nnoremap <C-L> <C-W><C-L>
+
+" Don't cancel visual select when shifting
+xnoremap < <gv
+xnoremap > >gv
+
+" Yank and paste from clipboard
+nnoremap <leader>y "+y
+vnoremap <leader>y "+y
+nnoremap <leader>yy "+yy
+nnoremap <leader>p "+p
+nnoremap <leader>P "+P
+vnoremap <leader>p "+p
+vnoremap <leader>P "+P
+
 " Ctrl-/ clears search highlight. Vim wants a '_' instead of '/' for some reason
 nnoremap <silent> <C-_> :nohlsearch<CR><C-_>
 
 " Smooth scrolling
-noremap <silent> <c-u> :call smooth_scroll#up(&scroll, 10, 2)<CR>
-noremap <silent> <c-d> :call smooth_scroll#down(&scroll, 10, 2)<CR>
-noremap <silent> <c-b> :call smooth_scroll#up(&scroll*2, 15, 4)<CR>
-noremap <silent> <c-f> :call smooth_scroll#down(&scroll*2, 15, 4)<CR>
+nnoremap <silent> <c-u> :call smooth_scroll#up(&scroll, 10, 2)<CR>
+nnoremap <silent> <c-d> :call smooth_scroll#down(&scroll, 10, 2)<CR>
+nnoremap <silent> <c-b> :call smooth_scroll#up(&scroll*2, 15, 4)<CR>
+nnoremap <silent> <c-f> :call smooth_scroll#down(&scroll*2, 15, 4)<CR>
 
 " Remap Make command and redraw over terminal output
 nnoremap <leader>m :silent make\|redraw!\|cw<CR>
-
 command! -nargs=1 Silent
             \ | execute ':silent !'.<q-args>
             \ | execute ':redraw!'
-
 nnoremap <leader>r :Silent ./run.sh<CR>
-nnoremap <leader>d :Silent ./debug.sh<CR>
-" Ag
-nnoremap <leader>k :Ag "\b<C-R><C-W>\b"<CR>:cw<CR>

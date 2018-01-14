@@ -19,6 +19,7 @@ alias run='./run.sh'
 alias r=run
 alias debug='./debug.sh'
 alias d=debug
+alias clang++=clang++-3.5
 ## Windows
 alias AMDCompressCLI='wine ~/.wine/drive_c/Program\ Files\ \(x86\)/AMD/AMDCompress/CLI/AMDCompressCLI.exe'
 

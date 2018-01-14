@@ -14,6 +14,7 @@ set ruler                      " show the current row and column
 set hidden                     " buffers can exist without being in a window
 set autoread                   " reload files changed externally
 set laststatus=2               " space for airline
+set noswapfile                 "
 let mapleader=","              " backslash is silly
 
 " Indentation
@@ -44,8 +45,12 @@ set smartcase  " no ignorecase if Uppercase char present
 " Programming-specific
 syntax on                  " turn syntax highlighting on by default
 filetype plugin indent on  " load indent file for specific file type
-au FileType * setl fo-=cro " disable autocomment, which is enabled by filtype plugin
+au FileType * setl fo-=cro " disable autocomment, which is enabled by filetype plugin
 set makeprg=./build.sh
+
+" Filetype associations
+au BufNewFile,BufRead *.vertex set filetype=glsl
+au BufNewFile,BufRead *.fragment set filetype=glsl
 
 " Load Plugins
 call plug#begin('~/.vim/plugged')
@@ -75,11 +80,10 @@ let g:lightline = {
     \ 'separator': { 'left': '', 'right': '' },
     \ 'subseparator': { 'left': '', 'right': '' }
     \}
-" clighter
-let g:clighter_libclang_file = '/usr/lib/libclang.so'
-let g:clighter_highlight_blacklist = []
 " CtrlP
 let g:ctrlp_map =  '<leader>f'
+let g:ctrlp_user_command = 'ag %s -l --nocolor --hidden -g ""'
+let g:ctrlp_switch_buffer =  '0'
 
 " Cursor
 let &t_SI .= "\<Esc>[1 q" " insert mode: blinking block
@@ -156,17 +160,20 @@ hi BlockExpr          ctermfg=red
 hi MacroDefinition    ctermfg=darkgray
 hi MacroInstantiation ctermfg=darkred
 
+" folds
+highlight Folded                  ctermfg=yellow   ctermbg=darkblue
+
 " easymotion
-highlight EasyMotionTarget        ctermfg=darkred ctermbg=none
-highlight EasyMotionShade         ctermfg=darkblue    ctermbg=none
-highlight EasyMotionTarget2First  ctermfg=yellow ctermbg=none
-highlight EasyMotionTarget2Second ctermfg=magenta    ctermbg=none
+highlight EasyMotionTarget        ctermfg=darkred   ctermbg=none
+highlight EasyMotionShade         ctermfg=darkblue  ctermbg=none
+highlight EasyMotionTarget2First  ctermfg=yellow    ctermbg=none
+highlight EasyMotionTarget2Second ctermfg=magenta   ctermbg=none
 
 " minibuf explorer
-highlight MBENormal               ctermfg=darkgreen ctermbg=NONE
-highlight MBEChanged              ctermfg=darkred   ctermbg=NONE
-highlight MBEVisibleNormal        ctermfg=gray      ctermbg=NONE
-highlight MBEVisibleChanged       ctermfg=darkred   ctermbg=NONE
+highlight MBENormal               ctermfg=darkgreen ctermbg=none
+highlight MBEChanged              ctermfg=darkred   ctermbg=none
+highlight MBEVisibleNormal        ctermfg=gray      ctermbg=none
+highlight MBEVisibleChanged       ctermfg=darkred   ctermbg=none
 highlight MBEVisibleActiveNormal  ctermfg=gray      ctermbg=darkblue
 highlight MBEVisibleActiveChanged ctermfg=darkred   ctermbg=darkblue
 

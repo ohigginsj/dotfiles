@@ -14,8 +14,11 @@ set ruler                      " show the current row and column
 set hidden                     " buffers can exist without being in a window
 set autoread                   " reload files changed externally
 set laststatus=2               " space for airline
-set noswapfile                 "
+set noswapfile                 " they suck
+set cursorline                 " trying this
 let mapleader=","              " backslash is silly
+
+" test
 
 " Indentation
 set autoindent
@@ -26,6 +29,7 @@ set shiftwidth=4
 set softtabstop=4
 set expandtab
 set cinoptions=(0,W4 " Indent to open parenthesis
+set noshowmode " lightline got this
 
 " Whitespace
 set list
@@ -41,12 +45,14 @@ set incsearch  " do incremental searching
 set showmatch  " jump to matches when entering regexp
 set ignorecase " ignore case when searching
 set smartcase  " no ignorecase if Uppercase char present
+set rtp+=~/.fzf
+setglobal complete-=i
 
 " Programming-specific
 syntax on                  " turn syntax highlighting on by default
 filetype plugin indent on  " load indent file for specific file type
 au FileType * setl fo-=cro " disable autocomment, which is enabled by filetype plugin
-set makeprg=./build.sh
+set makeprg=./env/unix/build.sh
 
 " Filetype associations
 au BufNewFile,BufRead *.vertex set filetype=glsl
@@ -58,32 +64,28 @@ Plug 'jeaye/color_coded'
 Plug 'bkad/CamelCaseMotion'
 Plug 'cespare/vim-toml'
 Plug 'ervandew/supertab'
-" Plug 'fholgado/minibufexpl.vim'
 Plug 'godlygeek/tabular'
 Plug 'itchyny/lightline.vim'
-Plug 'kien/ctrlp.vim'
 Plug 'lokaltog/vim-easymotion'
-Plug 'rking/ag.vim'
-Plug 'scrooloose/nerdtree'
 Plug 'scrooloose/nerdcommenter'
 Plug 'terryma/vim-smooth-scroll'
 Plug 'tikhomirov/vim-glsl'
-Plug 'tpope/vim-abolish'
-Plug 'tpope/vim-fugitive'
+Plug 'junegunn/fzf.vim'
+Plug 'jceb/vim-hier'
+Plug 'ziglang/zig.vim'
+Plug 'majutsushi/tagbar'
 Plug 'tpope/vim-unimpaired'
 call plug#end()
 
 " Plugin Configuration
+" color_coded
+let g:color_coded_filetypes = ['c', 'cpp']
 " lightline
 let g:lightline = {
     \ 'colorscheme': '16color',
-    \ 'separator': { 'left': '', 'right': '' },
-    \ 'subseparator': { 'left': '', 'right': '' }
+    \ 'separator': { 'left': ' ', 'right': ' ' },
+    \ 'subseparator': { 'left': ' ', 'right': ' ' }
     \}
-" CtrlP
-let g:ctrlp_map =  '<leader>f'
-let g:ctrlp_user_command = 'ag %s -l --nocolor --hidden -g ""'
-let g:ctrlp_switch_buffer =  '0'
 
 " Cursor
 let &t_SI .= "\<Esc>[1 q" " insert mode: blinking block
@@ -111,7 +113,9 @@ let &t_EI .= "\<Esc>[2 q" " other modes: solid block
 set t_Co=16
 set background=dark
 colorscheme default
-highlight Search cterm=NONE ctermfg=white ctermbg=black
+" Basic
+hi Search cterm=NONE ctermfg=white ctermbg=black
+hi CursorLine cterm=NONE ctermfg=white ctermbg=black
 " General
 hi Comment          ctermfg=darkblue
 hi Constant         ctermfg=darkred
@@ -177,6 +181,10 @@ highlight MBEVisibleChanged       ctermfg=darkred   ctermbg=none
 highlight MBEVisibleActiveNormal  ctermfg=gray      ctermbg=darkblue
 highlight MBEVisibleActiveChanged ctermfg=darkred   ctermbg=darkblue
 
+" Hier
+let g:hier_highlight_group_qf = 'QFError'
+hi QFError          ctermbg=black
+
 " Todo, Note
 highlight Todo term=bold ctermfg=red ctermbg=none
 
@@ -186,7 +194,7 @@ highlight Todo term=bold ctermfg=red ctermbg=none
 nnoremap ; :
 
 " Ag mappings
-map <C-P> "zyiw:exe "Ag ".@z.""<CR>
+"map <C-P> "zyiw:exe "Ag ".@z.""<CR>
 
 " CamelCaseMotion"
 call camelcasemotion#CreateMotionMappings(',')
@@ -201,6 +209,17 @@ nnoremap <C-L> <C-W><C-L>
 xnoremap < <gv
 xnoremap > >gv
 
+" QuickFix
+nnoremap <Space> :cn<CR>
+
+" fzf
+nnoremap <leader>h :Files<CR>
+nnoremap <leader>f :Buffers<CR>
+nnoremap <leader>t :Tags<CR>
+
+" tagbar
+nnoremap <leader>v :TagbarToggle<CR>
+
 " Yank and paste from clipboard
 nnoremap <leader>y "+y
 vnoremap <leader>y "+y
@@ -210,8 +229,15 @@ nnoremap <leader>P "+P
 vnoremap <leader>p "+p
 vnoremap <leader>P "+P
 
+" Paste without yank
+vnoremap <leader>p "_dP
+
+" Search arglist for word under cursor
+nnoremap <leader>s :vimgrep <cword> ##<CR>
+
 " Ctrl-/ clears search highlight. Vim wants a '_' instead of '/' for some reason
-nnoremap <silent> <C-_> :nohlsearch<CR><C-_>
+" Piggy back this keybind for error highlighting plugin
+nnoremap <silent> <C-_> :nohlsearch<CR>:HierClear<CR><C-_>
 
 " Smooth scrolling
 nnoremap <silent> <c-u> :call smooth_scroll#up(&scroll, 10, 2)<CR>
@@ -224,4 +250,4 @@ nnoremap <leader>m :silent make\|redraw!\|cw<CR>
 command! -nargs=1 Silent
             \ | execute ':silent !'.<q-args>
             \ | execute ':redraw!'
-nnoremap <leader>r :Silent ./run.sh<CR>
+nnoremap <leader>r :Silent ./env/unix/run.sh<CR>
